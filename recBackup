@@ -1,0 +1,553 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.4.0
+-- Dumped by pg_dump version 9.4.0
+-- Started on 2017-09-24 23:27:38 EDT
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- TOC entry 184 (class 3079 OID 12123)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2477 (class 0 OID 0)
+-- Dependencies: 184
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- TOC entry 185 (class 3079 OID 299022)
+-- Name: ltree; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS ltree WITH SCHEMA public;
+
+
+--
+-- TOC entry 2478 (class 0 OID 0)
+-- Dependencies: 185
+-- Name: EXTENSION ltree; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION ltree IS 'data type for hierarchical tree-like structures';
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- TOC entry 180 (class 1259 OID 299013)
+-- Name: Comments_id_seq; Type: SEQUENCE; Schema: public; Owner: matthewbrandman
+--
+
+CREATE SEQUENCE "Comments_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE "Comments_id_seq" OWNER TO matthewbrandman;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 179 (class 1259 OID 298981)
+-- Name: Comments; Type: TABLE; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+CREATE TABLE "Comments" (
+    user_id integer,
+    organization_id integer,
+    text text,
+    id integer DEFAULT nextval('"Comments_id_seq"'::regclass) NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    recruit_id integer,
+    parent_id integer
+);
+
+
+ALTER TABLE "Comments" OWNER TO matthewbrandman;
+
+--
+-- TOC entry 175 (class 1259 OID 298819)
+-- Name: Organizations; Type: TABLE; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+CREATE TABLE "Organizations" (
+    id integer NOT NULL,
+    primary_name character varying(255),
+    secondary_name character varying(255),
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    token_code character varying(255),
+    user_id integer
+);
+
+
+ALTER TABLE "Organizations" OWNER TO matthewbrandman;
+
+--
+-- TOC entry 174 (class 1259 OID 298817)
+-- Name: Organizations_id_seq; Type: SEQUENCE; Schema: public; Owner: matthewbrandman
+--
+
+CREATE SEQUENCE "Organizations_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE "Organizations_id_seq" OWNER TO matthewbrandman;
+
+--
+-- TOC entry 2479 (class 0 OID 0)
+-- Dependencies: 174
+-- Name: Organizations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: matthewbrandman
+--
+
+ALTER SEQUENCE "Organizations_id_seq" OWNED BY "Organizations".id;
+
+
+--
+-- TOC entry 178 (class 1259 OID 298881)
+-- Name: Recruits; Type: TABLE; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+CREATE TABLE "Recruits" (
+    id integer NOT NULL,
+    first_name character varying(255),
+    middle_name character varying(255),
+    last_name character varying(255),
+    organization_id integer,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    user_id integer
+);
+
+
+ALTER TABLE "Recruits" OWNER TO matthewbrandman;
+
+--
+-- TOC entry 173 (class 1259 OID 298808)
+-- Name: Users; Type: TABLE; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+CREATE TABLE "Users" (
+    id integer NOT NULL,
+    first_name character varying(255),
+    last_name character varying(255),
+    password character varying(255),
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    username character varying(255),
+    organization_id integer
+);
+
+
+ALTER TABLE "Users" OWNER TO matthewbrandman;
+
+--
+-- TOC entry 172 (class 1259 OID 298806)
+-- Name: Users_id_seq; Type: SEQUENCE; Schema: public; Owner: matthewbrandman
+--
+
+CREATE SEQUENCE "Users_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE "Users_id_seq" OWNER TO matthewbrandman;
+
+--
+-- TOC entry 2480 (class 0 OID 0)
+-- Dependencies: 172
+-- Name: Users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: matthewbrandman
+--
+
+ALTER SEQUENCE "Users_id_seq" OWNED BY "Users".id;
+
+
+--
+-- TOC entry 183 (class 1259 OID 299249)
+-- Name: Votes; Type: TABLE; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+CREATE TABLE "Votes" (
+    user_id integer,
+    comment_id integer,
+    id integer NOT NULL,
+    value integer,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE "Votes" OWNER TO matthewbrandman;
+
+--
+-- TOC entry 182 (class 1259 OID 299247)
+-- Name: Votes_id_seq; Type: SEQUENCE; Schema: public; Owner: matthewbrandman
+--
+
+CREATE SEQUENCE "Votes_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE "Votes_id_seq" OWNER TO matthewbrandman;
+
+--
+-- TOC entry 2481 (class 0 OID 0)
+-- Dependencies: 182
+-- Name: Votes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: matthewbrandman
+--
+
+ALTER SEQUENCE "Votes_id_seq" OWNED BY "Votes".id;
+
+
+--
+-- TOC entry 181 (class 1259 OID 299242)
+-- Name: recruit_comments; Type: VIEW; Schema: public; Owner: matthewbrandman
+--
+
+CREATE VIEW recruit_comments AS
+ WITH RECURSIVE recruit_comments(id, parent_id, comment, level) AS (
+         SELECT "Comments".id,
+            "Comments".id AS parent_id,
+            "Comments".text,
+            0 AS level
+           FROM "Comments"
+          WHERE ("Comments".parent_id IS NULL)
+        UNION ALL
+         SELECT c.id,
+            c.parent_id,
+            c.text,
+            (ct.level + 1)
+           FROM ("Comments" c
+             JOIN recruit_comments ct ON ((ct.id = c.parent_id)))
+        )
+ SELECT recruit_comments.id,
+    recruit_comments.parent_id,
+    recruit_comments.comment,
+    recruit_comments.level
+   FROM recruit_comments;
+
+
+ALTER TABLE recruit_comments OWNER TO matthewbrandman;
+
+--
+-- TOC entry 177 (class 1259 OID 298879)
+-- Name: recruits_id_seq; Type: SEQUENCE; Schema: public; Owner: matthewbrandman
+--
+
+CREATE SEQUENCE recruits_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE recruits_id_seq OWNER TO matthewbrandman;
+
+--
+-- TOC entry 2482 (class 0 OID 0)
+-- Dependencies: 177
+-- Name: recruits_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: matthewbrandman
+--
+
+ALTER SEQUENCE recruits_id_seq OWNED BY "Recruits".id;
+
+
+--
+-- TOC entry 176 (class 1259 OID 298846)
+-- Name: user_organizations; Type: TABLE; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+CREATE TABLE user_organizations (
+    user_id integer NOT NULL,
+    organization_id integer NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+
+ALTER TABLE user_organizations OWNER TO matthewbrandman;
+
+--
+-- TOC entry 2326 (class 2604 OID 298822)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: matthewbrandman
+--
+
+ALTER TABLE ONLY "Organizations" ALTER COLUMN id SET DEFAULT nextval('"Organizations_id_seq"'::regclass);
+
+
+--
+-- TOC entry 2327 (class 2604 OID 298884)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: matthewbrandman
+--
+
+ALTER TABLE ONLY "Recruits" ALTER COLUMN id SET DEFAULT nextval('recruits_id_seq'::regclass);
+
+
+--
+-- TOC entry 2325 (class 2604 OID 298811)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: matthewbrandman
+--
+
+ALTER TABLE ONLY "Users" ALTER COLUMN id SET DEFAULT nextval('"Users_id_seq"'::regclass);
+
+
+--
+-- TOC entry 2329 (class 2604 OID 299252)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: matthewbrandman
+--
+
+ALTER TABLE ONLY "Votes" ALTER COLUMN id SET DEFAULT nextval('"Votes_id_seq"'::regclass);
+
+
+--
+-- TOC entry 2345 (class 2606 OID 298989)
+-- Name: Comments_pkey; Type: CONSTRAINT; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+ALTER TABLE ONLY "Comments"
+    ADD CONSTRAINT "Comments_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2336 (class 2606 OID 298827)
+-- Name: Organizations_pkey; Type: CONSTRAINT; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+ALTER TABLE ONLY "Organizations"
+    ADD CONSTRAINT "Organizations_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2331 (class 2606 OID 298947)
+-- Name: UQ_username; Type: CONSTRAINT; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+ALTER TABLE ONLY "Users"
+    ADD CONSTRAINT "UQ_username" UNIQUE (username);
+
+
+--
+-- TOC entry 2333 (class 2606 OID 298816)
+-- Name: Users_pkey; Type: CONSTRAINT; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+ALTER TABLE ONLY "Users"
+    ADD CONSTRAINT "Users_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2343 (class 2606 OID 298889)
+-- Name: recruits_pkey; Type: CONSTRAINT; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+ALTER TABLE ONLY "Recruits"
+    ADD CONSTRAINT recruits_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2339 (class 2606 OID 298925)
+-- Name: user_id_organization_id_pkey; Type: CONSTRAINT; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+ALTER TABLE ONLY user_organizations
+    ADD CONSTRAINT user_id_organization_id_pkey PRIMARY KEY (user_id, organization_id);
+
+
+--
+-- TOC entry 2350 (class 2606 OID 299254)
+-- Name: votes_pkey; Type: CONSTRAINT; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+ALTER TABLE ONLY "Votes"
+    ADD CONSTRAINT votes_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2346 (class 1259 OID 298995)
+-- Name: FKI_organizations_comments; Type: INDEX; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+CREATE INDEX "FKI_organizations_comments" ON "Comments" USING btree (organization_id);
+
+
+--
+-- TOC entry 2337 (class 1259 OID 298958)
+-- Name: FKI_organizations_user_organizations; Type: INDEX; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+CREATE INDEX "FKI_organizations_user_organizations" ON user_organizations USING btree (organization_id);
+
+
+--
+-- TOC entry 2340 (class 1259 OID 298980)
+-- Name: FKI_organizations_users; Type: INDEX; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+CREATE INDEX "FKI_organizations_users" ON "Recruits" USING btree (organization_id);
+
+
+--
+-- TOC entry 2347 (class 1259 OID 299007)
+-- Name: FKI_recruits_comments; Type: INDEX; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+CREATE INDEX "FKI_recruits_comments" ON "Comments" USING btree (recruit_id);
+
+
+--
+-- TOC entry 2348 (class 1259 OID 299001)
+-- Name: FKI_users_comments; Type: INDEX; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+CREATE INDEX "FKI_users_comments" ON "Comments" USING btree (user_id);
+
+
+--
+-- TOC entry 2334 (class 1259 OID 298969)
+-- Name: FKI_users_organizations; Type: INDEX; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+CREATE INDEX "FKI_users_organizations" ON "Organizations" USING btree (user_id);
+
+
+--
+-- TOC entry 2341 (class 1259 OID 298902)
+-- Name: fki_user_organizations_fk_constraint_UserId_and_OrganizationId; Type: INDEX; Schema: public; Owner: matthewbrandman; Tablespace: 
+--
+
+CREATE INDEX "fki_user_organizations_fk_constraint_UserId_and_OrganizationId" ON "Recruits" USING btree (user_id, organization_id);
+
+
+--
+-- TOC entry 2357 (class 2606 OID 298990)
+-- Name: FK_organizations_comments; Type: FK CONSTRAINT; Schema: public; Owner: matthewbrandman
+--
+
+ALTER TABLE ONLY "Comments"
+    ADD CONSTRAINT "FK_organizations_comments" FOREIGN KEY (organization_id) REFERENCES "Organizations"(id);
+
+
+--
+-- TOC entry 2353 (class 2606 OID 298953)
+-- Name: FK_organizations_user_organizations; Type: FK CONSTRAINT; Schema: public; Owner: matthewbrandman
+--
+
+ALTER TABLE ONLY user_organizations
+    ADD CONSTRAINT "FK_organizations_user_organizations" FOREIGN KEY (organization_id) REFERENCES "Organizations"(id);
+
+
+--
+-- TOC entry 2356 (class 2606 OID 298975)
+-- Name: FK_organizations_users; Type: FK CONSTRAINT; Schema: public; Owner: matthewbrandman
+--
+
+ALTER TABLE ONLY "Recruits"
+    ADD CONSTRAINT "FK_organizations_users" FOREIGN KEY (organization_id) REFERENCES "Organizations"(id);
+
+
+--
+-- TOC entry 2359 (class 2606 OID 299002)
+-- Name: FK_recruits_comments; Type: FK CONSTRAINT; Schema: public; Owner: matthewbrandman
+--
+
+ALTER TABLE ONLY "Comments"
+    ADD CONSTRAINT "FK_recruits_comments" FOREIGN KEY (recruit_id) REFERENCES "Recruits"(id);
+
+
+--
+-- TOC entry 2351 (class 2606 OID 298941)
+-- Name: FK_user_organizations_users; Type: FK CONSTRAINT; Schema: public; Owner: matthewbrandman
+--
+
+ALTER TABLE ONLY "Users"
+    ADD CONSTRAINT "FK_user_organizations_users" FOREIGN KEY (id, organization_id) REFERENCES user_organizations(user_id, organization_id);
+
+
+--
+-- TOC entry 2358 (class 2606 OID 298996)
+-- Name: FK_users_comments; Type: FK CONSTRAINT; Schema: public; Owner: matthewbrandman
+--
+
+ALTER TABLE ONLY "Comments"
+    ADD CONSTRAINT "FK_users_comments" FOREIGN KEY (user_id) REFERENCES "Users"(id);
+
+
+--
+-- TOC entry 2352 (class 2606 OID 298964)
+-- Name: FK_users_organizations; Type: FK CONSTRAINT; Schema: public; Owner: matthewbrandman
+--
+
+ALTER TABLE ONLY "Organizations"
+    ADD CONSTRAINT "FK_users_organizations" FOREIGN KEY (user_id) REFERENCES "Users"(id);
+
+
+--
+-- TOC entry 2355 (class 2606 OID 298970)
+-- Name: FK_users_recruits; Type: FK CONSTRAINT; Schema: public; Owner: matthewbrandman
+--
+
+ALTER TABLE ONLY "Recruits"
+    ADD CONSTRAINT "FK_users_recruits" FOREIGN KEY (user_id) REFERENCES "Users"(id);
+
+
+--
+-- TOC entry 2354 (class 2606 OID 298959)
+-- Name: FK_users_user_organizations; Type: FK CONSTRAINT; Schema: public; Owner: matthewbrandman
+--
+
+ALTER TABLE ONLY user_organizations
+    ADD CONSTRAINT "FK_users_user_organizations" FOREIGN KEY (user_id) REFERENCES "Users"(id);
+
+
+--
+-- TOC entry 2476 (class 0 OID 0)
+-- Dependencies: 5
+-- Name: public; Type: ACL; Schema: -; Owner: matthewbrandman
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM matthewbrandman;
+GRANT ALL ON SCHEMA public TO matthewbrandman;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+-- Completed on 2017-09-24 23:27:38 EDT
+
+--
+-- PostgreSQL database dump complete
+--
+
